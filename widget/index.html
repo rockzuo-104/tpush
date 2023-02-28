@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Module Develop</title>
+<meta charset="utf-8">
+<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+<style type="text/css">
+	html,body{
+		height: 100%
+	}
+	body{
+		background-color: #fff;
+	    margin: 0;
+	}
+	#wrap{
+	    height: 100%;
+	    position: relative;
+	}
+	#header{
+		background-color: #5082c2;
+		height: 44px;
+	    position: relative;
+	}
+	#header h1{
+	    font-size: 20px; 
+	    height: 44px; 
+	    line-height: 44px; 
+	    margin: 0em; 
+	    color: #fff;
+		margin-left: 100px;
+		margin-right: 100px;
+		text-align: center;
+	}
+    #main{
+        display: block;
+    }
+    a.button{
+        display: -webkit-box;
+        -webkit-box-pack: center;
+        -webkit-box-align: center;
+        height: 36px;
+        margin: 8px;
+        background-color: rgba(240,240,240,1.0);
+        border-color: rgba(220,220,220,1.0);
+        border-width: 2px;
+        border-style: solid;
+	}
+    a.active{
+        background-color: rgba(240,240,240,0.6);
+	}
+</style>
+</head>
+<body>
+	<div id="wrap">
+	    <header id="header">
+	    	<h1 id="title">TPNS Demo</h1>
+	    </header>
+	    <div id="main">
+            <a class="button" tapmode="active" onclick="startXG()">注册</a>
+            <a class="button" tapmode="active" onclick="upsertAccount()">设置账号</a>
+            <a class="button" tapmode="active" onclick="delAccount()">删除指定账号</a>
+            <a class="button" tapmode="active" onclick="clearAccounts()">清除全部账号</a>
+            <a class="button" tapmode="active" onclick="appendTags()">追加标签</a>
+            <a class="button" tapmode="active" onclick="clearAndAppendTags()">覆盖标签</a>
+            <a class="button" tapmode="active" onclick="delTags()">删除指定标签</a>
+            <a class="button" tapmode="active" onclick="clearTags()">清除全部标签</a>
+            <a class="button" tapmode="active" onclick="setBadge()">设置角标</a>
+            <a class="button" tapmode="active" onclick="stopXG()">注销</a>
+        </div>
+    </div>
+</body>
+<script>
+/// 启动TPNS服务
+function startXG() {
+    var arg = {accessId: "1600007893", accessKey: "IX4BGYYG8L4L"};
+    var tpush = api.require('tpnsApiCloud');
+    
+    /// 透传消息回调
+    api.addEventListener({name:'onReceiveMessage'}, function(ret, err) {
+      console.log('onReceiveMessage' + JSON.stringify(ret));
+      api.toast({
+          msg: 'onReceiveMessage\n' + JSON.stringify(ret),
+          location: 'bottom'
+      });
+    });
+    
+    /// 应用前台收到通知消息回调
+    api.addEventListener({name:'onReceiveNotificationResponse'}, function(ret, err) {
+      console.log('onReceiveNotificationResponse' + JSON.stringify(ret));
+      api.toast({
+          msg: 'onReceiveNotificationResponse\n' + JSON.stringify(ret),
+          location: 'bottom'
+      });
+    });
+    
+    /// 通知点击回调
+    api.addEventListener({name:'xgPushClickAction'}, function(ret, err) {
+      console.log('xgPushClickAction' + JSON.stringify(ret));
+      api.toast({
+          msg: 'xgPushClickAction\n' + JSON.stringify(ret),
+          location: 'bottom'
+      });
+    });
+    
+    /// 开启debug日志，开发时开启
+    tpush.enableDebug({enableDebug: true});
+    /// 注册TPNS服务
+    tpush.startXg(arg, function(ret) {
+        api.toast({
+            msg: JSON.stringify(ret),
+            location: 'bottom'
+        });
+    });
+}
+    
+/// 注销推送服务
+function stopXG() {
+    var tpush = api.require('tpnsApiCloud');
+    tpush.stopXg(function(ret) {
+        api.toast({
+            msg: JSON.stringify(ret),
+            location: 'bottom'
+        });
+    });
+}
+
+/// 设置账号
+function upsertAccount() {
+    var tpush = api.require('tpnsApiCloud');
+    var arg = {account: "account", accountType: 0};
+    tpush.upsertAccount(arg, function(ret) {
+        api.toast({
+            msg: JSON.stringify(ret),
+            location: 'bottom'
+        });
+    });
+}
+
+/// 删除指定账号
+function delAccount() {
+    var tpush = api.require('tpnsApiCloud');
+    var arg = {account: "account", accountType: 0};
+    tpush.delAccount(arg, function(ret) {
+        api.toast({
+            msg: JSON.stringify(ret),
+            location: 'bottom'
+        });
+    });
+}
+    
+/// 清除全部账号
+function clearAccounts() {
+    var tpush = api.require('tpnsApiCloud');
+    tpush.clearAccounts(function(ret) {
+        api.toast({
+            msg: JSON.stringify(ret),
+            location: 'bottom'
+        });
+    });
+}
+ 
+/// 追加标签
+function appendTags() {
+    var tpush = api.require('tpnsApiCloud');
+    var tagvalue = ["tag1", "tag2", "tag3"];
+    var arg = {tags: tagvalue};
+    tpush.appendTags(arg, function(ret) {
+        api.toast({
+            msg: JSON.stringify(ret),
+            location: 'bottom'
+        });
+    });
+}
+    
+/// 覆盖标签(清除所有标签再追加)
+function clearAndAppendTags() {
+    var tpush = api.require('tpnsApiCloud');
+    var tagvalue = ["tag1", "tag2", "tag3"];
+    var arg = {tags: tagvalue};
+    tpush.clearAndAppendTags(arg, function(ret) {
+        api.toast({
+            msg: JSON.stringify(ret),
+            location: 'bottom'
+        });
+    });
+}
+ 
+/// 删除指定标签
+function delTags() {
+    var tpush = api.require('tpnsApiCloud');
+    var tagvalue = ["tag1", "tag2", "tag3"];
+    var arg = {tags: tagvalue};
+    tpush.delTags(arg, function(ret) {
+        api.toast({
+            msg: JSON.stringify(ret),
+            location: 'bottom'
+        });
+    });
+}
+    
+/// 清除全部标签
+function clearTags() {
+    var tpush = api.require('tpnsApiCloud');
+    tpush.clearTags(function(ret) {
+        api.toast({
+            msg: JSON.stringify(ret),
+            location: 'bottom'
+        });
+    });
+}
+
+/// 设置角标
+function setBadge() {
+    var tpush = api.require('tpnsApiCloud');
+    var arg = {badgeNum: 20};
+    tpush.setBadgeNum(arg, function(ret) {
+        api.toast({
+            msg: JSON.stringify(ret),
+            location: 'bottom'
+        });
+    });
+}
+
+function apiready() {
+    var header = document.getElementById('header');
+    header.style.paddingTop = api.safeArea.top + 'px';
+    
+    api.removeLaunchView();
+}
+</script>
+</html>
